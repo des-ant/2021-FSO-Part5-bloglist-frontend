@@ -16,6 +16,15 @@ const App = () => {
     );
   }, []);
 
+  useEffect(() => {
+    // Check if user details of logged-in user can be found on the local storage
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON);
+      setUser(user);
+    }
+  }, []);
+
   const handleLogin = async (event) => {
     event.preventDefault();
 
@@ -23,6 +32,10 @@ const App = () => {
       const user = await loginService.login({
         username, password,
       });
+
+      window.localStorage.setItem(
+        'loggedBlogappUser', JSON.stringify(user)
+      );
       setUser(user);
       setUsername('');
       setPassword('');
@@ -31,9 +44,19 @@ const App = () => {
     }
   };
 
+  // Update text field to reflect keyboard input
   const handleUsernameChange = ({ target }) => setUsername(target.value);
-
   const handlePasswordChange = ({ target }) => setPassword(target.value);
+
+  const handleLogout = (event) => {
+    event.preventDefault();
+
+    // Logout user by removing login details from the local storage in browser
+    window.localStorage.removeItem('loggedBlogappUser');
+
+    // Remove user details from state, thus reloading the App UI
+    setUser(null);
+  };
 
   if (user === null) {
     return (
@@ -54,6 +77,7 @@ const App = () => {
     <div>
       <h2>blogs</h2>
       <p>{user.name} logged in</p>
+      <button onClick={handleLogout}>logout</button>
       {blogs.map(blog =>
       <Blog key={blog.id} blog={blog} />
       )}
