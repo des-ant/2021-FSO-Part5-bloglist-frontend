@@ -84,7 +84,6 @@ const App = () => {
     }
   };
 
-
   const increaseLikesOf = async (id) => {
     const blog = blogs.find(b => b.id === id);
     const changedBlog = { ...blog, likes: blog.likes + 1};
@@ -92,6 +91,17 @@ const App = () => {
     try {
       const returnedBlog = await blogService.update(id, changedBlog);
       setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog));
+      notifyWith(`you liked blog ${returnedBlog.title}`);
+    } catch (exception) {
+      notifyWith(`${exception.response.data.error}`, 'error');
+    }
+  };
+
+  const deleteBlog = async (id) => {
+    try {
+      await blogService.remove(id);
+      setBlogs(blogs.filter(blog => blog.id !== id));
+      notifyWith('blog deleted successfully');
     } catch (exception) {
       notifyWith(`${exception.response.data.error}`, 'error');
     }
@@ -139,6 +149,8 @@ const App = () => {
         key={blog.id}
         blog={blog}
         increaseLikes={() => increaseLikesOf(blog.id)}
+        deleteBlog={() => deleteBlog(blog.id)}
+        username={user ? user.username : null}
       />
       )}
     </div>
