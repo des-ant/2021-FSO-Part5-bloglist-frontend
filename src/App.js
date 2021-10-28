@@ -17,6 +17,8 @@ const App = () => {
 
   const [user, setUser] = useState(null);
 
+  const blogFormRef = useRef();
+
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
@@ -74,15 +76,26 @@ const App = () => {
   const addBlog = async (blogObject) => {
     try {
       blogFormRef.current.toggleVisibility();
-      const returnedNote = await blogService.create(blogObject);
-      setBlogs(blogs.concat(returnedNote));
-      notifyWith(`a new blog ${returnedNote.title} by ${returnedNote.author} added`);
+      const returnedBlog = await blogService.create(blogObject);
+      setBlogs(blogs.concat(returnedBlog));
+      notifyWith(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`);
     } catch (exception) {
       notifyWith(`${exception.response.data.error}`, 'error');
     }
   };
 
-  const blogFormRef = useRef();
+
+  const increaseLikesOf = async (id) => {
+    const blog = blogs.find(b => b.id === id);
+    const changedBlog = { ...blog, likes: blog.likes + 1};
+
+    try {
+      const returnedBlog = await blogService.update(id, changedBlog);
+      setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog));
+    } catch (exception) {
+      notifyWith(`${exception.response.data.error}`, 'error');
+    }
+  };
 
   const blogForm = () => (
     <Togglable buttonLabel="create new blog" ref={blogFormRef}>
@@ -119,7 +132,11 @@ const App = () => {
       <h2>create new</h2>
       {blogForm()}
       {blogs.map(blog =>
-      <Blog key={blog.id} blog={blog} />
+      <Blog
+        key={blog.id}
+        blog={blog}
+        increaseLikes={() => increaseLikesOf(blog.id)}
+      />
       )}
     </div>
   );
