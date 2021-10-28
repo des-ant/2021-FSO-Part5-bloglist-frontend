@@ -9,9 +9,6 @@ import loginService from './services/login';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [url, setUrl] = useState('');
 
   const [notification, setNotification] = useState(null);
 
@@ -74,20 +71,11 @@ const App = () => {
     notifyWith('logged out successfully');
   };
 
-  const addBlog = async (event) => {
-    event.preventDefault();
-    const blogObject = {
-      title: title,
-      author: author,
-      url: url,
-    };
+  const addBlog = async (blogObject) => {
     try {
       const returnedNote = await blogService.create(blogObject);
       setBlogs(blogs.concat(returnedNote));
       notifyWith(`a new blog ${returnedNote.title} by ${returnedNote.author} added`);
-      setTitle('');
-      setAuthor('');
-      setUrl('');
     } catch (exception) {
       notifyWith(`${exception.response.data.error}`, 'error');
     }
@@ -120,15 +108,9 @@ const App = () => {
       <p>{user.name} logged in</p>
       <button onClick={handleLogout}>logout</button>
       <h2>create new</h2>
-      <Togglable buttonLabel="new blog">
+      <Togglable buttonLabel="create new blog">
         <BlogForm
-          onSubmit={addBlog}
-          title={title}
-          handleTitleChange={({ target }) => setTitle(target.value)}
-          author={author}
-          handleAuthorChange={({ target }) => setAuthor(target.value)}
-          url={url}
-          handleUrlChange={({ target }) => setUrl(target.value)}
+          createBlog={addBlog}
         />
       </Togglable>
       {blogs.map(blog =>
