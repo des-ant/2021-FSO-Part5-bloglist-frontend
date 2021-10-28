@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Blog from './components/Blog';
 import LoginForm from './components/LoginForm';
 import BlogForm from './components/BlogForm';
@@ -73,6 +73,7 @@ const App = () => {
 
   const addBlog = async (blogObject) => {
     try {
+      blogFormRef.current.toggleVisibility();
       const returnedNote = await blogService.create(blogObject);
       setBlogs(blogs.concat(returnedNote));
       notifyWith(`a new blog ${returnedNote.title} by ${returnedNote.author} added`);
@@ -80,6 +81,14 @@ const App = () => {
       notifyWith(`${exception.response.data.error}`, 'error');
     }
   };
+
+  const blogFormRef = useRef();
+
+  const blogForm = () => (
+    <Togglable buttonLabel="create new blog" ref={blogFormRef}>
+      <BlogForm createBlog={addBlog} />
+    </Togglable>
+  );
 
   if (user === null) {
     return (
@@ -108,11 +117,7 @@ const App = () => {
       <p>{user.name} logged in</p>
       <button onClick={handleLogout}>logout</button>
       <h2>create new</h2>
-      <Togglable buttonLabel="create new blog">
-        <BlogForm
-          createBlog={addBlog}
-        />
-      </Togglable>
+      {blogForm()}
       {blogs.map(blog =>
       <Blog key={blog.id} blog={blog} />
       )}
