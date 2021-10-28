@@ -86,7 +86,7 @@ const App = () => {
 
   const increaseLikesOf = async (id) => {
     const blog = blogs.find(b => b.id === id);
-    const changedBlog = { ...blog, likes: blog.likes + 1};
+    const changedBlog = { ...blog, likes: blog.likes + 1 };
 
     try {
       const returnedBlog = await blogService.update(id, changedBlog);
@@ -145,13 +145,13 @@ const App = () => {
       <h2>create new</h2>
       {blogForm()}
       {blogsSorted.map(blog =>
-      <Blog
-        key={blog.id}
-        blog={blog}
-        increaseLikes={() => increaseLikesOf(blog.id)}
-        deleteBlog={() => deleteBlog(blog.id)}
-        username={user ? user.username : null}
-      />
+        <Blog
+          key={blog.id}
+          blog={blog}
+          increaseLikes={() => increaseLikesOf(blog.id)}
+          deleteBlog={() => deleteBlog(blog.id)}
+          username={user ? user.username : null}
+        />
       )}
     </div>
   );

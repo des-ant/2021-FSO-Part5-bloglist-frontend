@@ -10,7 +10,7 @@ const Blog = ({ blog, increaseLikes, deleteBlog, username }) => {
   const toggleVisibility = () => {
     setVisible(!visible);
   };
-  
+
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -37,7 +37,7 @@ const Blog = ({ blog, increaseLikes, deleteBlog, username }) => {
         {blog.user && blog.user.username === username &&
         <button onClick={deleteBlog}>remove</button>}
       </div>
-    </div>  
+    </div>
   );
 };
 
