@@ -27,13 +27,12 @@ const Blog = ({ blog, increaseLikes, deleteBlog, username }) => {
         <button style={showWhenVisible} onClick={toggleVisibility}>hide</button>
       </div>
       <div style={showWhenVisible}>
-        {blog.url}
-        <br/>
-        likes {blog.likes}
+        <div>{blog.url}</div>
+        <div>likes {blog.likes}</div>
         <button onClick={increaseLikes}>like</button>
-        <br/>
-        {`${blog.user ? blog.user.name : 'No Owner'}`}
-        <br/>
+        <div>
+          {`${blog.user ? blog.user.name : 'No Owner'}`}
+        </div>
         {blog.user && blog.user.username === username &&
         <button onClick={deleteBlog}>remove</button>}
       </div>
