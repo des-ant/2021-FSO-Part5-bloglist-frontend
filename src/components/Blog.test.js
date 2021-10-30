@@ -1,11 +1,12 @@
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import { render, fireEvent } from '@testing-library/react';
-import { prettyDOM } from '@testing-library/dom';
+// import { prettyDOM } from '@testing-library/dom';
 import Blog from './Blog';
 
 describe('<Blog />', () => {
   let component;
+  let likeHandler;
 
   beforeEach(() => {
     const blog = {
@@ -14,14 +15,15 @@ describe('<Blog />', () => {
       url: 'Blog url should not be rendered by default'
     };
 
-    const mockHandler = jest.fn();
+    likeHandler = jest.fn();
+    const deleteHandler = jest.fn();
     const username = 'mockUser';
 
     component = render(
       <Blog
         blog={blog}
-        increaseLikes={mockHandler}
-        deleteBlog={mockHandler}
+        increaseLikes={likeHandler}
+        deleteBlog={deleteHandler}
         username={username}
       />
     );
@@ -60,8 +62,6 @@ describe('<Blog />', () => {
     const viewButton = component.getByText('view');
     fireEvent.click(viewButton);
 
-    console.log(prettyDOM(component.container));
-
     const blogUrl = component.getByText(
       'Blog url should not be rendered by default'
     );
@@ -76,5 +76,12 @@ describe('<Blog />', () => {
     const blogLikesParent = blogLikes.parentElement;
     expect(blogLikesParent).not.toHaveStyle('display: none');
   });
-});
 
+  test('clicking the like button calls event handler twice', () => {
+    const likeButton = component.getByText('like');
+    fireEvent.click(likeButton);
+    fireEvent.click(likeButton);
+
+    expect(likeHandler.mock.calls).toHaveLength(2);
+  });
+});
