@@ -97,5 +97,50 @@ describe('Blog app', function() {
         cy.contains('urlby.cypress').parent().should('not.contain', '@removeButton');
       });
     });
+
+    describe('and many blogs exists', function () {
+      beforeEach(function () {
+        cy.createBlog({
+          title: 'zero likes',
+          author: 'First Author',
+          url: 'first.url',
+          likes: 0
+        });
+
+        cy.createBlog({
+          title: 'three likes',
+          author: 'Second Author',
+          url: 'second.url',
+          likes: 3
+        });
+
+        cy.createBlog({
+          title: 'two likes',
+          author: 'Third Author',
+          url: 'third.url',
+          likes: 2
+        });
+      });
+
+      it.only('blogs are ordered according to likes in descending order', function () {
+        cy.get('.blog')
+          .then((blogs) => {
+            let prevLikes;
+            let currentLikes;
+            blogs.map((i, el) => {
+              cy.get(el).contains('button', 'view').click();
+              // Get the number of likes as an integer from each blog
+              cy.get(el).find('.likes').invoke('text').then((likesText) => {
+                currentLikes = parseInt(likesText);
+                // Skip the first blog as it has no previous blog to compare to
+                if (i > 0) {
+                  cy.wrap(currentLikes).should('be.lte', prevLikes);
+                }
+                prevLikes = currentLikes;
+              });
+            });
+          });
+      });
+    });
   });
 });

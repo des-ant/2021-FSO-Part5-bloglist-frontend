@@ -28,7 +28,7 @@ const Blog = ({ blog, increaseLikes, deleteBlog, username }) => {
       </div>
       <div style={showWhenVisible}>
         <div>{blog.url}</div>
-        <div>likes {blog.likes}</div>
+        <div>likes <span className='likes'>{blog.likes}</span></div>
         <button onClick={increaseLikes}>like</button>
         <div>
           {`${blog.user ? blog.user.name : 'No Owner'}`}
