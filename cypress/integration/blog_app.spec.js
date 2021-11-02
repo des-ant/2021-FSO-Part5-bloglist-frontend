@@ -33,4 +33,19 @@ describe('Blog app', function() {
       cy.get('html').should('not.contain', 'Superuser logged in');
     });
   });
+
+  describe('When logged in', function() {
+    beforeEach(function() {
+      cy.login({ username: 'root', password: 'salainen' });
+    });
+
+    it('A blog can be created', function() {
+      cy.contains('create new blog').click();
+      cy.get('#title').type('title created by cypress');
+      cy.get('#author').type('Cypress Author');
+      cy.get('#url').type('urlby.cypress');
+      cy.get('#blogform-button').click();
+      cy.contains('title created by cypress Cypress Author');
+    });
+  });
 });
