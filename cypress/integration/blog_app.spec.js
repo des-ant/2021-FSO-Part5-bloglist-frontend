@@ -1,13 +1,6 @@
 describe('Blog app', function() {
   beforeEach(function() {
-    cy.request('POST', 'http://localhost:3003/api/testing/reset');
-    const user = {
-      name: 'Superuser',
-      username: 'root',
-      password: 'salainen'
-    };
-    cy.request('POST', 'http://localhost:3003/api/users/', user);
-    cy.visit('http://localhost:3000');
+    cy.addUserRoot();
   });
 
   it('Login form is shown', function() {
