@@ -7,6 +7,14 @@ Cypress.Commands.add('addUserRoot', () => {
   });
 });
 
+Cypress.Commands.add('addUserAbc', () => {
+  cy.request('POST', 'http://localhost:3003/api/users/', {
+    name: 'Abc', username: 'abc', password: 'abc'
+  }).then(() => {
+    cy.visit('http://localhost:3000');
+  });
+});
+
 Cypress.Commands.add('login', ({ username, password }) => {
   cy.request('POST', 'http://localhost:3003/api/login', {
     username, password

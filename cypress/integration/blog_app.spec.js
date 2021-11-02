@@ -57,13 +57,44 @@ describe('Blog app', function() {
         });
       });
 
-      it.only('it can be made important', function () {
+      it('it can be made important', function () {
         cy.contains('title created by cypress Cypress Author').parent().contains('button', 'view').as('viewButton');
         cy.get('@viewButton').click();
         cy.contains('urlby.cypress').parent().contains('button', 'like').as('likeButton');
         cy.contains('urlby.cypress').parent().contains('likes 0');
         cy.get('@likeButton').click();
         cy.contains('urlby.cypress').parent().contains('likes 1');
+      });
+
+      it('it can be deleted by the user who created it', function () {
+        cy.contains('title created by cypress Cypress Author').parent().contains('button', 'view').as('viewButton');
+        cy.get('@viewButton').click();
+        cy.contains('urlby.cypress').parent().contains('button', 'remove').as('removeButton');
+        cy.get('@removeButton').click();
+
+        cy.get('.success')
+          .should('contain', 'blog deleted successfully')
+          .and('have.css', 'color', 'rgb(0, 128, 0)');
+      });
+
+      it('it cannot be deleted by other users', function () {
+        cy.addUserAbc();
+
+        cy.contains('title created by cypress Cypress Author').parent().contains('button', 'view').as('viewButton');
+        cy.get('@viewButton').click();
+        cy.contains('urlby.cypress').parent().contains('button', 'remove').as('removeButton');
+
+        cy.contains('button', 'logout').as('logoutButton');
+        cy.get('@logoutButton').click();
+
+        cy.get('.success')
+          .should('contain', 'logged out successfully')
+          .and('have.css', 'color', 'rgb(0, 128, 0)');
+
+        cy.login({ username: 'abc', password: 'abc' });
+
+        cy.get('@viewButton').click();
+        cy.contains('urlby.cypress').parent().should('not.contain', '@removeButton');
       });
     });
   });
