@@ -47,5 +47,24 @@ describe('Blog app', function() {
       cy.get('#blogform-button').click();
       cy.contains('title created by cypress Cypress Author');
     });
+
+    describe('and a blog exists', function () {
+      beforeEach(function () {
+        cy.createBlog({
+          title: 'title created by cypress',
+          author: 'Cypress Author',
+          url: 'urlby.cypress'
+        });
+      });
+
+      it.only('it can be made important', function () {
+        cy.contains('title created by cypress Cypress Author').parent().contains('button', 'view').as('viewButton');
+        cy.get('@viewButton').click();
+        cy.contains('urlby.cypress').parent().contains('button', 'like').as('likeButton');
+        cy.contains('urlby.cypress').parent().contains('likes 0');
+        cy.get('@likeButton').click();
+        cy.contains('urlby.cypress').parent().contains('likes 1');
+      });
+    });
   });
 });
